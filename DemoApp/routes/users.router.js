@@ -6,36 +6,36 @@ const {
   checkRole,
   userRegister,
   serializeUser
-} = require("../utils/Auth");
+} = require("../controller/user.controller");
 
 // Users Registeration Route
 router.post("/register-user", async (req, res) => {
-  await userRegister(req.body, "user", res);
+  await userRegister(req,res, "user");
 });
  
 // Admin Registration Route
 router.post("/register-admin", async (req, res) => {
-  await userRegister(req.body, "admin", res);
+  await userRegister(req,res, "admin");
 });
 
 // Super Admin Registration Route
 router.post("/register-super-admin", async (req, res) => {
-  await userRegister(req.body, "superadmin", res);
+  await userRegister(req,res, "superadmin");
 });
 
 // Users Login Route
 router.post("/login-user", async (req, res) => {
-  await userLogin(req.body, "user", res);
+  await userLogin(req,res, "user");
 });
 
 // Admin Login Route
 router.post("/login-admin", async (req, res) => {
-  await userLogin(req.body, "admin", res);
+  await userLogin(req,res, "admin");
 });
 
 // Super Admin Login Route
 router.post("/login-super-admin", async (req, res) => {
-  await userLogin(req.body, "superadmin", res);
+  await userLogin(req,res,"superadmin");
 });
 
 // Profile Route
