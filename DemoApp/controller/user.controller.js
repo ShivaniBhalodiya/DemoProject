@@ -21,6 +21,17 @@ const {
 const userRegister=async(req,res,employeetype)=>{
     try {
           var userDetails = req.body
+          console.log(req.body)
+        //   const userDetails = new User({
+        //     name : req.body.name,
+        //     username : req.body.username,
+        //     email: req.body.email,
+        //     employeetype:employeetype,
+        //     phone: req.body.phone,
+        //     totalexperience : req.body.totalexperience
+        // })
+        // console.log(userDetails)
+    
         //validate username
         let userNotTaken=await validateUsername(userDetails.username);
         if(!userNotTaken)
@@ -37,14 +48,24 @@ const userRegister=async(req,res,employeetype)=>{
         //create new user
     const HashPassword=await bcrypt.hash(userDetails.password,12)
     const NewUser=new User({
-        ...userDetails,
+        // ...userDetails,
+        name : req.body.name,
+        username : req.body.username,
+        email: req.body.email,
+        employeetype:employeetype,
+        phone: req.body.phone,
+        totalexperience : req.body.totalexperience,
         password:HashPassword,
-        employeetype:employeetype
+        
     });
+    console.log("Saved")  
     await NewUser.save();
-    return successResponse(req,res,NewUser,SUCCESSFULLY_REGISTERED,200)
+    console.log("Saved")
+    // return successResponse(req,res,NewUser,SUCCESSFULLY_REGISTERED,200)
+    return res.redirect('/login');
         
     } catch (error) {
+      console.log(error)
         return errorResponse(req,res,SOMETHING_WENT_WRONG,500)
     }
 
@@ -53,8 +74,11 @@ const userRegister=async(req,res,employeetype)=>{
 // for login
 const userLogin=async(req,res,employeetype)=>{
     let userCred = req.body
+    console.log(userCred)
     let {username,password}=userCred;
+    console.log("dtaaaaa",username)
     const user=await User.findOne({username})
+    console.log("userrr",user)
     //check username is in database or not
     if(!user)
     {
@@ -89,7 +113,8 @@ const userLogin=async(req,res,employeetype)=>{
         expiresIn: 168
       };
   
-      return successResponse(req,res,result,LOGIN_SUCCESSFULLY,200);
+      // return successResponse(req,res,result,LOGIN_SUCCESSFULLY,200);
+      return res.redirect('/welcome');
     } else {
       return errorResponse(req,res,INVALID_UNAME_PWORD,400)
     }

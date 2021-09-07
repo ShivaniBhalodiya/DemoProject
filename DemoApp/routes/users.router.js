@@ -1,4 +1,9 @@
 const router = require("express").Router();
+const req = require("express/lib/request");
+const res = require("express/lib/response");
+const services = require('../services/render');
+
+
 // Bring in the User Registration function
 const {
   userAuth,
@@ -8,17 +13,35 @@ const {
   serializeUser
 } = require("../controller/user.controller");
 
-// Users Registeration Route
-router.post("/register-user", async (req, res) => {
-  await userRegister(req,res, "user");
-});
- 
-// Admin Registration Route
-router.post("/register-admin", async (req, res) => {
-  await userRegister(req,res, "admin");
+router.get('/', services.homeRoutes);
+
+router.get('/welcome', (req,res)=>{
+  res.render('welcome')
+}
+)
+
+// router.get('/login',services.login_user)
+
+router.post("/register-/:id", async (req, res) => {
+  console.log("router called...")
+  console.log()
+  await userRegister(req,res,req.params.id);
 });
 
-// Super Admin Registration Route
+//static route for register-user
+
+// router.post("/register-user", async (req, res) => {
+//   console.log("router called...")
+//   console.log()
+//   await userRegister(req,res,"user");
+// });
+
+// Admin Registration Route
+router.post("/register-admin", async (req, res) => {
+  await userRegister(req,res, "admin"); 
+});
+
+// Super Admin Registration Route)P
 router.post("/register-super-admin", async (req, res) => {
   await userRegister(req,res, "superadmin");
 });
@@ -82,5 +105,7 @@ router.get(
     return res.json("Super admin and Admin");
   }
 );
+
+
 
 module.exports = router;
