@@ -1,43 +1,45 @@
-const { Schema, model } = require("mongoose");
+const {Schema,model}=require('mongoose')
 
-const UserSchema = new Schema(
-  {
-    name: {
-      type: String,
-      required: true
+const Register_UserSchema =new Schema({
+    firstname:{
+        type:String,
+        required:true,
     },
-    username: {
-      type: String,
-      required: true
+    lastname:{
+        type:String,
+        required:true,
     },
-    email: {
-      type: String,
-      required: true
+    email:{
+        type:String,
+        required:true,
     },
-    role: {
-      type: String,
-      default: "user",
-      enum: ["user", "admin", "superadmin"]
+    password:{
+        type:String,
+        required:true,
+        minlength:7
     },
-    employeetype: {
-      type: String,
-      required: true
+    phoneno:{
+        type:Number,
+        required:true,
     },
-    password: {
-      type: String,
-      required: true
-    },
-    phone:{
-      type:String,
-      required:true
+    employeetype:{
+        type:String,
+        required:true,
+        enum:["Trainee","Employee","Manager"]
     },
     totalexperience:{
-      type:Number,
-      required:true
+        type:Number,
+        required:true,
+    },
+    username:{
+        type:String,
+        required:true
     }
+    // role:{
+    //     type:String,
+    //     default:'user',
+    //     enum:['user','admin']
+    // }
+},{timestamps:true})
 
-  },
-  { timestamps: true }
-);
-
-module.exports = model("users", UserSchema);
+module.exports=model('Users',Register_UserSchema)

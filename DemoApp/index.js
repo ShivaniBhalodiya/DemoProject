@@ -1,85 +1,75 @@
-const cors = require("cors");
-const exp = require("express");
-const passport = require("passport");
-const { connect } = require("mongoose");
-const { success, error } = require("consola");
-const path = require("path")
-const bodyParser = require('body-parser')
-// Bring in the app constants
-const { DB, PORT } = require("./config");
-const express = require("express");
+const bodyParser = require('body-parser');
+const cors=require('cors');
+const express=require('express');
+const body_parser=require('body-parser');                                   
+const passport =require('passport')
+const {connect}=require('mongoose')
+const {error,success}=require('consola');
 
-// Initialize the application
-const app = exp();
-app.use(bodyParser.urlencoded({ extended: false }))
-// Middlewares
-app.set("view engine","ejs")
+//import constant
+const {DB}=require('./config/index');
+const PORT=process.env.PORT||3000;
+//initializing the app
+const app=express();
 
-app.use('/css',express.static(path.resolve(__dirname,"assets/css")))
-app.use('/images',express.static(path.resolve(__dirname,"assets/images")))
-app.use('/js',express.static(path.resolve(__dirname,"assets/js")))
-app.use('/scss',express.static(path.resolve(__dirname,"assets/scss")))
-app.use('/vendor',express.static(path.resolve(__dirname,"assets/vendor")))
-app.use('/fonts',express.static(path.resolve(__dirname,"assets/fonts")))
-app.use(cors());
-app.use(express.json());
-app.use(passport.initialize());
 
-require("./middlewares/passport")(passport);
+//use Middleware
+global.__basedir = __dirname;
 
-var counter = 0;
-
-// User Router Middleware
-app.use("/", require("./routes/users.router"));
-
-const startApp = async () => {
-  try {
-    counter++;
-    console.log(counter)
-    console.log("called")
-    // Connection With DB
-    await connect(DB, {
-      useUnifiedTopology: true,
-      useNewUrlParser: true
-    });
-
-    success({
-      message: `Successfully connected with the Database \n${DB}`,
-      badge: true
-    });
-
-    // Start Listenting for the server on PORT
-    app.listen(PORT, () =>
-      success({ message: `Server is running on http://localhost:${PORT}`, badge: true })
-    );
-  } catch (err) {
-    error({
-      message: `Unable to connect with Database \n${err}`,
-      badge: true
-    });
-
-    if(counter==10){
-      console.log("counter exceed")
-      counter = 0
-      const intervalObj = setTimeout(() => {
-        startApp();
-      }, 1000);
-      clearTimeout(intervalObj);
-     }
-     
-     startApp();
-    //  process.exit()
-    }
-    
+var corsOptions = {
+  origin: "http://localhost:8081"
 };
 
-startApp();
+app.use(cors(corsOptions));
+
+app.use(express.json());
+app.use(passport.initialize())
 
 
-app.get('/',(req,res)=>{
-  res.render('index')
-})
+require('./middleware/passport')(passport)
 
-app.get('/login',(req,res)=>{
-  res.render('login')
-})
+//users routes middleware
+app.use('/api/users',require('./routes/user.router'))
+app.use('/api/users',require('./routes/report.router'))
+
+var counter=0;
+const StartApp=async()=>{
+    //connect to database
+try {
+    counter++;
+    
+    await connect(DB,
+        {useUnifiedTopology:true,
+        useNewUrlParser:true
+    })
+    success({
+        message:`Successfully connected to Database ${DB}`,
+        badge:true
+    })
+    console.log(counter);
+    app.listen(PORT,()=>{
+        success({
+            message:`server is running on ${PORT}`,
+            badge:true
+        })
+    })
+} catch (err) {
+    error({
+        message:`Unable to connect database ${err}`,
+        badge:true
+    })
+    //StartApp();
+    console.log(counter);
+      if(counter==10){
+        const intervalObj = setTimeout(() => {
+            StartApp();
+          }, 5*60*1000);
+          clearTimeout(intervalObj);
+          counter=0;
+      }
+    StartApp();
+    process.exit();
+}
+}
+
+StartApp();
