@@ -22,24 +22,24 @@ router.get('/welcome', (req,res)=>{
 
 // router.get('/login',services.login_user)
 
-router.post("/register-/:id", async (req, res) => {
-  console.log("router called...")
-  console.log()
-  await userRegister(req,res,req.params.id);
-});
+// router.post("/register-/:id", async (req, res) => {
+//   console.log("router called...")
+//   console.log()
+//   await userRegister(req,res,req.params.id);
+// });
 
 //static route for register-user
 
-// router.post("/register-user", async (req, res) => {
-//   console.log("router called...")
-//   console.log()
-//   await userRegister(req,res,"user");
-// });
-
-// Admin Registration Route
-router.post("/register-admin", async (req, res) => {
-  await userRegister(req,res, "admin"); 
+router.post("/register", async (req, res) => {
+  console.log("router called...")
+  console.log(req.body.role)
+  await userRegister(req,res,req.body.role);
 });
+
+// // Admin Registration Route
+// router.post("/register-admin", async (req, res) => {
+//   await userRegister(req,res, "admin"); 
+// });
 
 // Super Admin Registration Route)P
 router.post("/register-super-admin", async (req, res) => {
@@ -47,9 +47,13 @@ router.post("/register-super-admin", async (req, res) => {
 });
 
 // Users Login Route
-router.post("/login-user", async (req, res) => {
-  await userLogin(req,res, "user");
+router.post("/login", async (req, res) => {
+  await userLogin(req,res);
 });
+
+// router.post("/login-user", async (req, res) => {
+//   await userLogin(req,res, "user");
+// });
 
 // Admin Login Route
 router.post("/login-admin", async (req, res) => {

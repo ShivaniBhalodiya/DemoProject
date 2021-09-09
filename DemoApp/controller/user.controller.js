@@ -72,13 +72,15 @@ const userRegister=async(req,res,employeetype)=>{
 }
 
 // for login
-const userLogin=async(req,res,employeetype)=>{
+const userLogin=async(req,res)=>{
     let userCred = req.body
-    console.log(userCred)
+    
     let {username,password}=userCred;
-    console.log("dtaaaaa",username)
+    
     const user=await User.findOne({username})
-    console.log("userrr",user)
+    let role = user.role
+
+    console.log("userrr",user.role)
     //check username is in database or not
     if(!user)
     {
@@ -86,7 +88,7 @@ const userLogin=async(req,res,employeetype)=>{
     }
 
     //we will check role
-    if(user.employeetype!=employeetype){
+    if(user.role!=role){
         return errorResponse(req,res,UNAUTHORIZED_PORTAL,400)
 }
 
