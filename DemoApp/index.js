@@ -6,7 +6,7 @@ const { success, error } = require("consola");
 const path = require("path")
 const bodyParser = require('body-parser')
 // Bring in the app constants
-const { DB, PORT } = require("./config");
+const { DB } = require("./config");
 const express = require("express");
 
 // Initialize the application
@@ -24,14 +24,25 @@ app.use('/fonts',express.static(path.resolve(__dirname,"assets/fonts")))
 app.use(cors());
 app.use(express.json());
 app.use(passport.initialize());
+
+const PORT = 5000
     
 require("./middlewares/passport")(passport);
 
-var counter = 0;
+//use Middleware
+global.__basedir = __dirname;
+
+var corsOptions = {
+  origin: "http://localhost:8081"
+};
+
+app.use(cors(corsOptions));
 
 // User Router Middleware
 app.use("/", require("./routes/users.router"));
+app.use('/api/users',require('./routes/report.router'))
 
+let counter = 0;
 const startApp = async () => {
   try {
     counter++;
@@ -41,11 +52,6 @@ const startApp = async () => {
     await connect(DB, {
       useUnifiedTopology: true,
       useNewUrlParser: true
-    });
-
-    success({
-      message: `Successfully connected with the Database \n${DB}`,
-      badge: true
     });
 
     // Start Listenting for the server on PORT
@@ -70,11 +76,10 @@ const startApp = async () => {
      startApp();
     //  process.exit()
     }
-    
-};
+
+}
 
 startApp();
-
 
 app.get('/',(req,res)=>{
   res.render('index')
@@ -83,3 +88,6 @@ app.get('/',(req,res)=>{
 app.get('/login',(req,res)=>{
   res.render('login')
 })
+
+
+

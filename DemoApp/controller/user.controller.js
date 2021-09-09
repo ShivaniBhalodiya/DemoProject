@@ -1,12 +1,10 @@
-const User=require('../models/User')
-const bcrypt=require('bcryptjs')
-const jwt=require('jsonwebtoken')
-const {SECRET}=require('../config/index')
-const passport=require('passport')
-const {
-  successResponse,
-  errorResponse,
-} = require('../helpers/helpers');
+const User = require("../models/User");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const { SECRET } = require("../config/index");
+const passport = require("passport");
+const Report = require("../models/Report");
+const { successResponse, errorResponse } = require("../helpers/helpers");
 const {
   USER_NOT_EXIST,
   USER_ALREADY_EXIST,
@@ -15,8 +13,8 @@ const {
   SUCCESSFULLY_REGISTERED,
   SOMETHING_WENT_WRONG,
   LOGIN_SUCCESSFULLY,
-  INVALID_UNAME_PWORD
-} = require('../helpers/messages');
+  INVALID_UNAME_PWORD,
+} = require("../helpers/messages");
 //@DEC to register the user(admin,user,superadmin)
 const userRegister=async(req,res,employeetype)=>{
     try {
@@ -60,7 +58,10 @@ const userRegister=async(req,res,employeetype)=>{
     });
     console.log("Saved")  
     await NewUser.save();
-    console.log("Saved")
+    const file_upload = await new Report({
+      // filepath: filepath,
+      u_id: NewUser._id,
+    }).save();
     // return successResponse(req,res,NewUser,SUCCESSFULLY_REGISTERED,200)
     return res.redirect('/login');
         
@@ -68,7 +69,7 @@ const userRegister=async(req,res,employeetype)=>{
       console.log(error)
         return errorResponse(req,res,SOMETHING_WENT_WRONG,500)
     }
-
+  
 }
 
 // for login
@@ -110,6 +111,7 @@ const userLogin=async(req,res)=>{
       let result = {
         username: user.username,
         employeetype: user.employeetype,
+        username: user.username,
         email: user.email,
         token: `Bearer ${token}`,
         expiresIn: 168
@@ -123,44 +125,42 @@ const userLogin=async(req,res)=>{
   };
 
 /*
-  ***@DESC passport middleware
-  */
+ ***@DESC passport middleware
+ */
 
-  const userAuth=passport.authenticate('jwt',{session:false})
+const userAuth = passport.authenticate("jwt", { session: false });
 
-const validateUsername=async(username)=>{
-    const user=await User.findOne({username});
-    return user?false:true
-}
+const validateUsername = async (username) => {
+  const user = await User.findOne({ username });
+  return user ? false : true;
+};
 
-const validateEmail=async(email)=>{
-    const user=await User.findOne({email});
-    return user?false:true
-}
+const validateEmail = async (email) => {
+  const user = await User.findOne({ email });
+  return user ? false : true;
+};
 
-const serializeUser=user=>{
-    return{
-        username: user.username,
+const serializeUser = (user) => {
+  return {
+    username: user.username,
     email: user.email,
     firstname: user.firstname,
     _id: user._id,
-   
-    }
-}
+  };
+};
 
 /**
  * @DESC Check Role Middleware
  */
- const checkRole = employeetype => (req, res, next) =>
- !employeetype.includes(req.user.employeetype)
-   ? res.status(401).json("Unauthorized")
-   : next();
+const checkRole = (employeetype) => (req, res, next) =>
+  !employeetype.includes(req.user.employeetype)
+    ? res.status(401).json("Unauthorized")
+    : next();
 
-
-module.exports={
-    userRegister,
-    userLogin,
-    userAuth,
-    serializeUser,
-    checkRole
-  }
+module.exports = {
+  userRegister,
+  userLogin,
+  userAuth,
+  serializeUser,
+  checkRole,
+};
