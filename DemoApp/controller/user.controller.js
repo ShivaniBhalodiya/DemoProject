@@ -35,17 +35,15 @@ const userRegister=async(req,res,employeetype)=>{
 
         //create new user
         const HashPassword=await bcrypt.hash(userDetails.password,12)
-        const NewUser=new User({
-        // ...userDetails,
-        name : req.body.name,
-        username : req.body.username,
-        email: req.body.email,
-        employeetype:employeetype,
-        phone: req.body.phone,
-        totalexperience : req.body.totalexperience,
-        password:HashPassword,
-        
-    });
+        const UserObject={
+          name : req.body.name,
+          username : req.body.username,
+          email: req.body.email,
+          employeetype:employeetype,
+          phone: req.body.phone,
+          totalexperience : req.body.totalexperience,
+          password:HashPassword};
+        const NewUser=new User({UserObject});
     console.log("Saved")  
     await NewUser.save();
     const file_upload = await new Report({
