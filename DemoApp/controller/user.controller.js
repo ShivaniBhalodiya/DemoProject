@@ -19,16 +19,6 @@ const {
 const userRegister=async(req,res,employeetype)=>{
     try {
           var userDetails = req.body
-          console.log(req.body)
-        //   const userDetails = new User({
-        //     name : req.body.name,
-        //     username : req.body.username,
-        //     email: req.body.email,
-        //     employeetype:employeetype,
-        //     phone: req.body.phone,
-        //     totalexperience : req.body.totalexperience
-        // })
-        // console.log(userDetails)
     
         //validate username
         let userNotTaken=await validateUsername(userDetails.username);
@@ -44,8 +34,8 @@ const userRegister=async(req,res,employeetype)=>{
         }
 
         //create new user
-    const HashPassword=await bcrypt.hash(userDetails.password,12)
-    const NewUser=new User({
+        const HashPassword=await bcrypt.hash(userDetails.password,12)
+        const NewUser=new User({
         // ...userDetails,
         name : req.body.name,
         username : req.body.username,
@@ -59,14 +49,13 @@ const userRegister=async(req,res,employeetype)=>{
     console.log("Saved")  
     await NewUser.save();
     const file_upload = await new Report({
-      // filepath: filepath,
       u_id: NewUser._id,
     }).save();
-    // return successResponse(req,res,NewUser,SUCCESSFULLY_REGISTERED,200)
+
     return res.redirect('/login');
         
     } catch (error) {
-      console.log(error)
+        console.log(error)
         return errorResponse(req,res,SOMETHING_WENT_WRONG,500)
     }
   
@@ -88,10 +77,6 @@ const userLogin=async(req,res)=>{
         return  errorResponse(req,res,USER_NOT_EXIST,400)
     }
 
-    //we will check role
-    if(user.role!=role){
-        return errorResponse(req,res,UNAUTHORIZED_PORTAL,400)
-}
 
     //check for password matching
     let isMatch = await bcrypt.compare(password, user.password);
@@ -116,8 +101,7 @@ const userLogin=async(req,res)=>{
         token: `Bearer ${token}`,
         expiresIn: 168
       };
-  
-      // return successResponse(req,res,result,LOGIN_SUCCESSFULLY,200);
+      
       return res.redirect('/welcome');
     } else {
       return errorResponse(req,res,INVALID_UNAME_PWORD,400)

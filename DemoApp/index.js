@@ -6,7 +6,7 @@ const { success, error } = require("consola");
 const path = require("path")
 const bodyParser = require('body-parser')
 // Bring in the app constants
-const { DB } = require("./config");
+const { DB ,port} = require("./config");
 const express = require("express");
 
 // Initialize the application
@@ -25,7 +25,7 @@ app.use(cors());
 app.use(express.json());
 app.use(passport.initialize());
 
-const PORT = 5000
+const PORT =port || 5000
     
 require("./middlewares/passport")(passport);
 
