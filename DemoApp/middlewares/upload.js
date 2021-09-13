@@ -3,23 +3,25 @@ const multer = require("multer");
 const maxSize = 2 * 1024 * 1024;
 const path = require('path');
 const uuid = require('uuid').v4;
+const FileType = require('file-type');
 const Report=require('../models/Report');
 let storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null,"upload");
-    
-
   },
   filename: (req, file, cb) => {
-    console.log("dddddd"+file.originalname)
+    console.log("file name"+file.originalname)
     const ext=path.extname(file.originalname)
     const id=uuid();
     const filepath=`documents/${id}${ext}`; 
     console.log(filepath)
-    Report.create({filepath})
-                .then(()=>{
-              cb(null,filepath)
-              })
+    const data=async ()=>{
+      await Report.create({filepath})
+      (()=>{
+      cb(null,filepath)
+    })
+    console.log(data);
+  }
 
     console.log(file.originalname);
     cb(null, file.originalname);
@@ -35,6 +37,7 @@ const fileFilter = function(req, file, cb) {
         return cb(new Error('Only doc or pdf files are allowed!'), false);
     }
     cb(null, true);
+
 };
 
 var uploadFile = multer({

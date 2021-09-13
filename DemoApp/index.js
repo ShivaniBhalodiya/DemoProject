@@ -6,7 +6,7 @@ const { success, error } = require("consola");
 const path = require("path")
 const bodyParser = require('body-parser')
 // Bring in the app constants
-const { DB ,port} = require("./config");
+const { DB ,port,ORIGIN} = require("./config");
 const express = require("express");
 
 // Initialize the application
@@ -32,9 +32,7 @@ require("./middlewares/passport")(passport);
 //use Middleware
 global.__basedir = __dirname;
 
-var corsOptions = {
-  origin: "http://localhost:8081"
-};
+var corsOptions = {ORIGIN};
 
 app.use(cors(corsOptions));
 

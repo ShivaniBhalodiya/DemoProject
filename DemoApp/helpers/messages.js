@@ -21,5 +21,8 @@ exports.YOU_ARE_NOT_AUTHORIZED = 'You are not authorized to access this route.';
 exports.DB_CONNECTION_SUCCESSFUL = 'Connection has been established successfully.';
 exports.DB_CONNECTION_UNSUCCESSFUL = 'Unable to connect to the database:';
 exports.TOO_MANY_REQUESTS = 'Too many requests from this IP, please try again after 15 Minutes';
-
+exports.PLEASE_SELECT_FILE='please select file';
+exports.UPLOADED_SUCCESSFULLY='Uploaded the file successfully';
+exports.FILE_SIZE='File size cannot be larger than 2MB!';
+exports.COUDNT_UPLOAD='Could not upload the file'
 

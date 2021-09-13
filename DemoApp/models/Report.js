@@ -4,7 +4,6 @@ const mongoose=require('mongoose')
 const Report_schema=new Schema({
     filepath:{
         type:String,
-       
     },
    u_id:{
         type:Schema.Types.ObjectId,
@@ -12,7 +11,5 @@ const Report_schema=new Schema({
     }
     
 })
-
-
 module.exports=model('Report',Report_schema)
 
