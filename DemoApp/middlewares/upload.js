@@ -52,7 +52,7 @@ const fileFilter = function(req, file, cb) {
 var uploadFile = multer({
   storage: storage,
   limits: { fileSize: maxSize }
-}).single('file')
+}).any()
 
 let uploadFileMiddleware = util.promisify(uploadFile);
 module.exports = uploadFileMiddleware;

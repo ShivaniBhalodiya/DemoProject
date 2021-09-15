@@ -1,30 +1,48 @@
 const uploadFile = require("../middlewares/upload");
-const fs = require("fs");
+const fs = require('fs')
+const { promisify } = require('util')
+const unlinkAsync = promisify(fs.unlink)
+      
 const path=require('path')
 const Report = require("../models/Report");
 const mongoose=require('mongoose')
 const FileType = require('file-type');
 const uuid = require('uuid').v4;
+
 const {
   successResponse,
   errorResponse}
   =require('../helpers/helpers')
+
 const {
   PLEASE_SELECT_FILE,
   UPLOADED_SUCCESSFULLY,
   FILE_SIZE,COUDNT_UPLOAD}
   =require('../helpers/messages')
-const upload = async (req, res) => {
+
+  const whitelist = [
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  ]
+const upload = async (req, res,next) => {
   try {
-    
-      await uploadFile(req, res);
-      console.log(req.body.file)
-      // const meta = await FileType.fromFile(req.file.path)
-      // console.log(meta)
-      // const data= await Report.find().populate("u_id").select("username")
-      // console.log(data);
-    return successResponse(req,res,UPLOADED_SUCCESSFULLY,201)
-    
+      console.log(req.files)
+      
+      req.files.forEach(async (file)=>{
+        console.log('path',file.path);
+        const meta = await FileType.fromFile(file.path)
+        console.log("mmetta",meta)
+        if (!whitelist.includes(meta.mime)) {
+          await unlinkAsync(file.path)
+          return res.send('file is not allowed')
+          }
+          else{
+            return successResponse(req,res,UPLOADED_SUCCESSFULLY,201)
+          }
+      }
+        
+      )
   } catch (err) {
     console.log(err);
 
@@ -34,7 +52,7 @@ const upload = async (req, res) => {
 
    return errorResponse(req,res,COUDNT_UPLOAD,500)
   }
-};
+}
 /*
 const id=uuid();
 const ext=path.extname(file.originalname)
