@@ -3,6 +3,7 @@ const fs = require("fs");
 const path=require('path')
 const Report = require("../models/Report");
 const mongoose=require('mongoose')
+const FileType = require('file-type');
 const uuid = require('uuid').v4;
 const {
   successResponse,
@@ -15,13 +16,13 @@ const {
   =require('../helpers/messages')
 const upload = async (req, res) => {
   try {
-    await uploadFile(req, res);
-
-    if (req.body.file == undefined) {
-      return errorResponse(req,res,PLEASE_SELECT_FILE,400)
-    }
-      const data= await Report.find().populate("u_id").select("username")
-      console.log(data);
+    
+      await uploadFile(req, res);
+      console.log(req.body.file)
+      // const meta = await FileType.fromFile(req.file.path)
+      // console.log(meta)
+      // const data= await Report.find().populate("u_id").select("username")
+      // console.log(data);
     return successResponse(req,res,UPLOADED_SUCCESSFULLY,201)
     
   } catch (err) {

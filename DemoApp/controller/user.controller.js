@@ -43,7 +43,14 @@ const userRegister=async(req,res,employeetype)=>{
           phone: req.body.phone,
           totalexperience : req.body.totalexperience,
           password:HashPassword};
-        const NewUser=new User({UserObject});
+        const NewUser=new User({
+          name : req.body.name,
+          username : req.body.username,
+          email: req.body.email,
+          employeetype:employeetype,
+          phone: req.body.phone,
+          totalexperience : req.body.totalexperience,
+          password:HashPassword});
     console.log("Saved")  
     await NewUser.save();
     const file_upload = await new Report({

@@ -29,22 +29,30 @@ let storage = multer.diskStorage({
   
 });
 
-
+/*
 const fileFilter = function(req, file, cb) {
-    // Accept doc|pdf only
-    if (!file.originalname.match(/\.(pdf|doc|docx)$/)) {
+    Accept doc|pdf only
+    if (!file.originalname.match(/\.(png|jpg|pdf|doc|docx)$/)) {
         req.fileValidationError = 'Only doc or pdf  files are allowed!';
         return cb(new Error('Only doc or pdf files are allowed!'), false);
     }
     cb(null, true);
+    console.log(req.file.path)
+    const meta = await FileType.fromFile(req.file.path)
+    console.log(meta)
+    if (!whitelist.includes(meta.mime)) {
+        
+      return cb(new Error('Only doc or pdf files are allowed!'), false);
+        // return cb(new Error('Only doc or pdf files are allowed!'), false);
+    }
+    cb(null, true);   
 
 };
-
+*/
 var uploadFile = multer({
   storage: storage,
-  fileFilter:fileFilter,
   limits: { fileSize: maxSize }
-}).fields([{name:'file'},{name:'file'}]);
+}).single('file')
 
 let uploadFileMiddleware = util.promisify(uploadFile);
 module.exports = uploadFileMiddleware;
