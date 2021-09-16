@@ -5,9 +5,8 @@ const Report_schema=new Schema({
     filepath:{
         type:String,
     },
-   u_id:{
-        type:Schema.Types.ObjectId,
-        ref:'User'
+    filename:{
+        type:String,
     }
     
 })

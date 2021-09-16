@@ -34,7 +34,11 @@ const UserSchema = new Schema(
     totalexperience:{
       type:Number,
       required:true
-    }
+    },
+    report:[{
+      type: Schema.Types.ObjectId,
+      ref: 'Report'
+    }]
 
   },
   { timestamps: true }

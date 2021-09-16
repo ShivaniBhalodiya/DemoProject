@@ -35,14 +35,14 @@ const userRegister=async(req,res,employeetype)=>{
 
         //create new user
         const HashPassword=await bcrypt.hash(userDetails.password,12)
-        const UserObject={
-          name : req.body.name,
-          username : req.body.username,
-          email: req.body.email,
-          employeetype:employeetype,
-          phone: req.body.phone,
-          totalexperience : req.body.totalexperience,
-          password:HashPassword};
+        // const UserObject={
+        //   name : req.body.name,
+        //   username : req.body.username,
+        //   email: req.body.email,
+        //   employeetype:employeetype,
+        //   phone: req.body.phone,
+        //   totalexperience : req.body.totalexperience,
+        //   password:HashPassword};
         const NewUser=new User({
           name : req.body.name,
           username : req.body.username,
@@ -53,9 +53,6 @@ const userRegister=async(req,res,employeetype)=>{
           password:HashPassword});
     console.log("Saved")  
     await NewUser.save();
-    const file_upload = await new Report({
-      u_id: NewUser._id,
-    }).save();
 
     return res.redirect('/login');
         

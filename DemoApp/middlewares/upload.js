@@ -10,22 +10,8 @@ let storage = multer.diskStorage({
     cb(null,"upload");
   },
   filename: (req, file, cb) => {
-    console.log("file name"+file.originalname)
-    const ext=path.extname(file.originalname)
-    const id=uuid();
-    const filepath=`documents/${id}${ext}`; 
-    console.log(filepath)
-    const data=async ()=>{
-      await Report.create({filepath})
-      (()=>{
-      cb(null,filepath)
-    })
-    console.log(data);
-  }
-
-    console.log(file.originalname);
     cb(null, file.originalname);
-  },
+},
   
 });
 
