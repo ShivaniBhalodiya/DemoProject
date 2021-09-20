@@ -15,13 +15,15 @@ let storage = multer.diskStorage({
     const id=uuid();
     const filepath=`documents/${id}${ext}`; 
     console.log(filepath)
-    const data=async ()=>{
+     (async()=>{
       await Report.create({filepath})
-      (()=>{
+      .then(()=>{
       cb(null,filepath)
-    })
+    })();
+     }) 
     console.log(data);
-  }
+
+  
 
     console.log(file.originalname);
     cb(null, file.originalname);

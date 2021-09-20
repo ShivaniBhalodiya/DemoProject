@@ -24,7 +24,7 @@ const userRegister=async(req,res,employeetype)=>{
         let userNotTaken=await validateUsername(userDetails.username);
         if(!userNotTaken)
         {
-            return errorResponse(res,req,USER_ALREADY_EXIST,400)
+            return errorResponse(req,res,USER_ALREADY_EXIST,400)
         }
         //validate email
         let emailNotTaken=await validateEmail(userDetails.email);
@@ -35,6 +35,7 @@ const userRegister=async(req,res,employeetype)=>{
 
         //create new user
         const HashPassword=await bcrypt.hash(userDetails.password,12)
+        /*
         const UserObject={
           name : req.body.name,
           username : req.body.username,
@@ -43,19 +44,22 @@ const userRegister=async(req,res,employeetype)=>{
           phone: req.body.phone,
           totalexperience : req.body.totalexperience,
           password:HashPassword};
+          */
         const NewUser=new User({
           name : req.body.name,
           username : req.body.username,
           email: req.body.email,
-          employeetype:employeetype,
+          employeetype:req.body.employeetype,
           phone: req.body.phone,
           totalexperience : req.body.totalexperience,
           password:HashPassword});
     console.log("Saved")  
     await NewUser.save();
-    const file_upload = await new Report({
-      u_id: NewUser._id,
-    }).save();
+   //Generate and set password reset token
+   NewUser.generatePasswordReset();
+
+   // Save the updated user object
+   await NewUser.save();
 
     return res.redirect('/login');
         
@@ -73,6 +77,7 @@ const userLogin=async(req,res)=>{
     let {username,password}=userCred;
     
     const user=await User.findOne({username})
+    console.log("userrrrrrrrrr",user)
     let role = user.role
 
     console.log("userrr",user.role)
@@ -97,6 +102,7 @@ const userLogin=async(req,res)=>{
         SECRET,
         { expiresIn: "7 days" }
       );
+      console.log('login token',token);
   
       let result = {
         username: user.username,
@@ -118,6 +124,47 @@ const userLogin=async(req,res)=>{
  */
 
 const userAuth = passport.authenticate("jwt", { session: false });
+
+// @route POST api/resend
+// @desc Resend Verification Token
+// @access Public
+exports.resendToken = async (req, res) => {
+  try {
+      const { email } = req.body;
+
+      const user = await User.findOne({ email });
+
+      if (!user) return res.status(401).json({ message: 'The email address ' + req.body.email + ' is not associated with any account. Double-check your email address and try again.'});
+
+      if (user.isVerified) return res.status(400).json({ message: 'This account has already been verified. Please log in.'});
+
+      await sendVerificationEmail(user, req, res);
+  } catch (error) {
+      res.status(500).json({message: error.message})
+  }
+};
+
+async function sendVerificationEmail(user, req, res){
+  try{
+      const token = user.generateVerificationToken();
+
+      // Save the verification token
+      await token.save();
+
+      let subject = "Account Verification Token";
+      let to = user.email;
+      let from = process.env.FROM_EMAIL;
+      let link="http://"+req.headers.host+"/verify/"+token.token;
+      let html = `<p>Hi ${user.username}<p><br><p>Please click on the following <a href="${link}">link</a> to verify your account.</p> 
+                <br><p>If you did not request this, please ignore this email.</p>`;
+
+      await sendEmail({to, from, subject, html});
+
+      res.status(200).json({message: 'A verification email has been sent to ' + user.email + '.'});
+  }catch (error) {
+      res.status(500).json({message: error.message})
+  }
+}
 
 const validateUsername = async (username) => {
   const user = await User.findOne({ username });

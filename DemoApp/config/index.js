@@ -3,5 +3,6 @@ module.exports={
     DB:process.env.APP_DB,
     PORT:process.env.PORT,
     SECRET:process.env.APP_SECRET,
-    ORIGIN:process.env.ORIGIN
+    SENDGRID_API_KEY:process.env.SENDGRID_API_KEY,
+    FROM_EMAIL:process.env.FROM_EMAIL
 }

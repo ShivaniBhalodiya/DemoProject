@@ -1,5 +1,5 @@
 const { Schema, model } = require("mongoose");
-
+const crypto = require('crypto');
 const UserSchema = new Schema(
   {
     name: {
@@ -34,10 +34,27 @@ const UserSchema = new Schema(
     totalexperience:{
       type:Number,
       required:true
-    }
+    },
+    resetPasswordToken: {
+      type: String,
+      required: false
+  },
+
+  resetPasswordExpires: {
+      type: Date,
+      required: false
+  }
 
   },
   { timestamps: true }
 );
 
-module.exports = model("users", UserSchema);
+UserSchema.methods.generatePasswordReset = function() {
+  this.resetPasswordToken = crypto.randomBytes(20).toString('hex');
+  this.resetPasswordExpires = Date.now() + 3600000; //expires in an hour
+};
+
+
+
+
+module.exports = model("User", UserSchema);

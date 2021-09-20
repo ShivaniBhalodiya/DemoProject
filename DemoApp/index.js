@@ -13,7 +13,11 @@ const express = require("express");
 const app = exp();
 app.use(bodyParser.urlencoded({ extended: false }))
 // Middlewares
-app.set("view engine","ejs")
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'jade');
+
+app.set('view engine','ejs');
+
 
 app.use('/css',express.static(path.resolve(__dirname,"assets/css")))
 app.use('/images',express.static(path.resolve(__dirname,"assets/images")))
