@@ -115,6 +115,7 @@ const userLogin=async(req,res)=>{
       
       return res.redirect('/welcome');
     } else {
+     
       return errorResponse(req,res,INVALID_UNAME_PWORD,400)
     }
   };

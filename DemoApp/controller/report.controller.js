@@ -5,6 +5,7 @@ const unlinkAsync = promisify(fs.unlink)
       
 const path=require('path')
 const Report = require("../models/Report");
+const User = require("../models/User")
 const mongoose=require('mongoose')
 const FileType = require('file-type');
 const uuid = require('uuid').v4;
@@ -29,17 +30,25 @@ const upload = async (req, res,next) => {
   try {
       console.log(req.files)
       
-      req.files.forEach(async (file)=>{
+        req.files.forEach(async (file)=>{
         console.log('path',file.path);
         const meta = await FileType.fromFile(file.path)
         console.log("mmetta",meta)
-        if (!whitelist.includes(meta.mime)) {
+        if (!whitelist.includes(meta.mime)) 
+        {
           await unlinkAsync(file.path)
           return res.send('file is not allowed')
-          }
-          else{
+        }
+        else{
+            const ext=path.extname(file.originalname)
+            const id=uuid();
+            const filepath=`documents/${id}${ext}`; 
+            const newReport = await Report.create({filename:file.originalname,filepath:filepath}).then(function(dbReview) {
+              console.log("Db Review",dbReview)
+               return User.findOneAndUpdate({ _id: req.params.id }, {$push: {report: dbReview._id}}, { new: true });
+            })
             return successResponse(req,res,UPLOADED_SUCCESSFULLY,201)
-          }
+        }
       }
         
       )

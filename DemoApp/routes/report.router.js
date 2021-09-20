@@ -7,7 +7,7 @@ const {userAuth}=require('../controller/user.controller')
 const FileType = require('file-type');
           
 // router.post('/upload',uploadFile,upload);
-router.post('/upload',uploadFile,upload);
+router.post('/upload/:id',uploadFile,upload);
 
 
 module.exports =router;

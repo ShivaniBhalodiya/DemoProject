@@ -43,7 +43,11 @@ const UserSchema = new Schema(
   resetPasswordExpires: {
       type: Date,
       required: false
-  }
+  },
+    report:[{
+      type: Schema.Types.ObjectId,
+      ref: 'Report'
+    }]
 
   },
   { timestamps: true }
